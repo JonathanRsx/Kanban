@@ -2,17 +2,43 @@ import { create } from "zustand";
 import type { ColumnProps } from "./model/column";
 import JSONData from "@/data/kanban.json";
 import type { CardProps } from "./model/card";
+import { moveCardToColumn } from "./lib/utils";
 
 type BoardStore = {
   draggingCard: string | null;
   setDraggingCard: (cardId: string | null) => void;
   columnsData: ColumnProps;
   addTask: (column: string, card: CardProps) => void;
+  moveCard: (
+    cards: ColumnProps,
+    cardId: string,
+    column: string,
+    index: number
+  ) => void;
+};
+
+const defaultData: ColumnProps = {
+  "To Do": [],
+  "In Progress": [],
+  "Done": []
+};
+
+const getInitialData =  (): ColumnProps => {
+  try {
+    // Tenter de récupérer les données du localStorage
+    const storedData = localStorage.getItem('kanban');
+    
+    // Si des données existent, les retourner, sinon utiliser les données par défaut
+    return storedData ? JSON.parse(storedData) : defaultData;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données:", error);
+    return defaultData;
+  }
 };
 
 export const useBoardStore = create<BoardStore>((set) => ({
   draggingCard: null,
-  columnsData: JSONData.columns,
+  columnsData: getInitialData(),
   setDraggingCard: (cardId: string | null) => set({ draggingCard: cardId }),
 
   addTask: (columnId, card) =>
@@ -33,10 +59,26 @@ export const useBoardStore = create<BoardStore>((set) => ({
         },
       };
 
-      console.log(
-        "Nouvel état:",
-        JSON.stringify(newState.columnsData, null, 2)
-      );
+      localStorage.setItem('board', JSON.stringify(newState))
+      return newState;
+    }),
+
+  moveCard: (
+    cards: ColumnProps,
+    cardId: string,
+    column: string,
+    index: number
+  ) =>
+    set(() => {
+      const newState = {
+        columnsData: moveCardToColumn({
+          cards,
+          cardId,
+          column,
+          index,
+        }),
+      };
+      localStorage.setItem('board', JSON.stringify(newState))
       return newState;
     }),
 }));

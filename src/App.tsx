@@ -1,13 +1,11 @@
-import { useState } from "react";
 import "./App.css";
 import Column from "./components/Column";
-import type { ColumnProps } from "./model/column";
 import { useBoardStore } from "./board-store";
-import { moveCardToColumn } from "./lib/utils";
+
 
 function App() {
   const { columnsData } = useBoardStore();
-  const [data, setData] = useState<ColumnProps>(columnsData);
+  const moveCard = useBoardStore((state) => state.moveCard);
 
   const columns = Object.keys(columnsData) as string[];
 
@@ -16,14 +14,7 @@ function App() {
   const onDrop = (column: string, index: number) => {
     if (!draggingCard) return;
 
-    const newCards = moveCardToColumn({
-      cards: data,
-      cardId: draggingCard,
-      column,
-      index,
-    });
-
-    setData(newCards);
+    moveCard(columnsData, draggingCard, column, index);
   };
 
   return (

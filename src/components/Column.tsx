@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import DropIndicator from "./DropIndicator";
 import type { CardProps } from "@/model/card";
 import { cn } from "@/lib/utils";
-import { AddingItem } from "./AddingItem";
+import { AddItem } from "./AddItem";
 export default function Column({
   column,
   cards,
@@ -54,7 +54,7 @@ export default function Column({
             <DropIndicator onDrop={() => onDrop(column, index + 1)} />
           </React.Fragment>
         ))}
-        <AddingItem type="Add" column={column}/>
+        <AddItem type="Add" column={column}/>
       </div>
     </div>
   );
