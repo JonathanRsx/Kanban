@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "./ui/textarea";
+import { useBoardStore } from "@/board-store";
 
 export function AddingItem({
   type,
@@ -27,9 +28,13 @@ export function AddingItem({
   description?: string;
 }) {
   const handleSubmit = (formData: FormData) => {
-    const title = formData.get("title");
-    const description = formData.get("description");
-    console.log("t", title, description);
+    const title = formData.get("title")?.toString() || '';
+    const description = formData.get("description")?.toString() || '';
+    useBoardStore.getState().addTask(column, {
+      id: Date.now(),
+      title,
+      description,
+    });
   };
 
   return (

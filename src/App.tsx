@@ -2,7 +2,6 @@ import { useState } from "react";
 import "./App.css";
 import Column from "./components/Column";
 import type { ColumnProps } from "./model/column";
-
 import { useBoardStore } from "./board-store";
 import { moveCardToColumn } from "./lib/utils";
 
@@ -10,7 +9,7 @@ function App() {
   const { columnsData } = useBoardStore();
   const [data, setData] = useState<ColumnProps>(columnsData);
 
-  const columns = Object.keys(data) as string[];
+  const columns = Object.keys(columnsData) as string[];
 
   const draggingCard = useBoardStore((state) => state.draggingCard);
 
@@ -33,7 +32,7 @@ function App() {
         <Column
           key={column}
           column={column}
-          cards={data[column]}
+          cards={columnsData[column]}
           onDrop={onDrop}
         />
       ))}
