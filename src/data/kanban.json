@@ -1,0 +1,45 @@
+{
+  "columns": {
+    "To Do": [
+      {
+        "id": 101,
+        "title": "Create mockup",
+        "description": "Design the initial mockup for the new application."
+      },
+      {
+        "id": 102,
+        "title": "Write project specifications",
+        "description": "Document all project requirements and specifications."
+      },
+      {
+        "id": 103,
+        "title": "Research competitors",
+        "description": "Analyze competitors' features and market positioning."
+      }
+    ],
+    "In Progress": [
+      {
+        "id": 201,
+        "title": "Backend Development",
+        "description": "Implement APIs for user management."
+      },
+      {
+        "id": 202,
+        "title": "Design UI",
+        "description": "Create wireframes and prototypes for the user interface."
+      }
+    ],
+    "Done": [
+      {
+        "id": 301,
+        "title": "Kickoff Meeting",
+        "description": "Organize the project kickoff meeting."
+      },
+      {
+        "id": 302,
+        "title": "Initial Research",
+        "description": "Complete initial market research and analysis."
+      }
+    ]
+  }
+}
