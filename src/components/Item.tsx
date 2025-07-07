@@ -3,8 +3,17 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 import type { CardProps } from "@/model/card";
 import { motion } from "motion/react";
 import { useBoardStore } from "@/board-store";
+import { Edit } from "lucide-react";
+import { Button } from "./ui/button";
+import { AddItem } from "./AddItem";
 
-export default function Item({ card }: { card: CardProps }) {
+export default function Item({
+  column,
+  card,
+}: {
+  column: string;
+  card: CardProps;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const setDraggingCard = useBoardStore((state) => state.setDraggingCard);
@@ -23,9 +32,12 @@ export default function Item({ card }: { card: CardProps }) {
       draggable="true"
       onDragStart={handleDragStart}
       onDragEnd={() => setDraggingCard(null)}
-      className="cursor-grab active:cursor-grabbing active:animate-pulse gap-2 flex flex-col"
+      className="cursor-grab active:cursor-grabbing active:animate-pulse gap-2 flex flex-col group relative"
     >
-      <Card className="gap-0 text-left">
+      <Card className="gap-0 text-left text-color">
+        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out top-2 right-2 text-muted-foreground">
+          <AddItem type="Edit" column={column} {...card} />
+        </div>
         <CardHeader>{card.title}</CardHeader>
         <CardContent className="text-muted-foreground">
           {card.description}

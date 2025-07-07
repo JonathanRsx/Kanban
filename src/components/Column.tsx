@@ -50,11 +50,11 @@ export default function Column({
         <DropIndicator onDrop={() => onDrop(column, 0)} />
         {cards.map((card, index) => (
           <React.Fragment key={card.id}>
-            <Item card={card} />
+            <Item card={card} column={column} />
             <DropIndicator onDrop={() => onDrop(column, index + 1)} />
           </React.Fragment>
         ))}
-        <AddItem type="Add" column={column}/>
+        <AddItem type="Add" column={column} />
       </div>
     </div>
   );

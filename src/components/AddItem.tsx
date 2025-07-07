@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "./ui/textarea";
 import { useBoardStore } from "@/board-store";
+import { Edit } from "lucide-react";
+import { useState } from "react";
 
 export function AddItem({
   type,
@@ -27,20 +29,49 @@ export function AddItem({
   title?: string;
   description?: string;
 }) {
+  const [open, setIsOpen] = useState(false);
+
   const handleSubmit = (formData: FormData) => {
-    const title = formData.get("title")?.toString() || '';
-    const description = formData.get("description")?.toString() || '';
-    useBoardStore.getState().addTask(column, {
-      id: Date.now(),
-      title,
-      description,
-    });
+    const title = formData.get("title")?.toString() || "";
+    const description = formData.get("description")?.toString() || "";
+    console.log("card", id, title, description);
+    if (id) {
+      useBoardStore.getState().updateTask(column, {
+        id,
+        title,
+        description,
+      });
+    } else {
+      useBoardStore.getState().addTask(column, {
+        id: Date.now(),
+        title,
+        description,
+      });
+    }
+    setIsOpen(false);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add items</Button>
+        {type === "Add" ? (
+          <Button
+            variant="ghost"
+            className="text-muted-foreground font-normal w-20"
+            onClick={() => setIsOpen(true)}
+          >
+            Add items
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="p-1"
+            onClick={() => setIsOpen(true)}
+          >
+            <Edit size={16} />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

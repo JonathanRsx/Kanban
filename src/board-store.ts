@@ -1,14 +1,20 @@
 import { create } from "zustand";
 import type { ColumnProps } from "./model/column";
-import JSONData from "@/data/kanban.json";
 import type { CardProps } from "./model/card";
 import { moveCardToColumn } from "./lib/utils";
+
+interface DataProps {
+  title: string;
+  columns: ColumnProps;
+}
 
 type BoardStore = {
   draggingCard: string | null;
   setDraggingCard: (cardId: string | null) => void;
-  columnsData: ColumnProps;
-  addTask: (column: string, card: CardProps) => void;
+  columnsData: DataProps;
+  updateTitle: (newtitle: string) => void;
+  addTask: (columnId: string, card: CardProps) => void;
+  updateTask: (columnId: string, updatedCard: CardProps) => void;
   moveCard: (
     cards: ColumnProps,
     cardId: string,
@@ -17,17 +23,20 @@ type BoardStore = {
   ) => void;
 };
 
-const defaultData: ColumnProps = {
-  "To Do": [],
-  "In Progress": [],
-  "Done": []
+const defaultData: DataProps = {
+  title: "My kanban board",
+  columns: {
+    "To Do": [],
+    "In Progress": [],
+    Done: [],
+  },
 };
 
-const getInitialData =  (): ColumnProps => {
+const getInitialData = (): DataProps => {
   try {
     // Tenter de récupérer les données du localStorage
-    const storedData = localStorage.getItem('kanban');
-    
+    const storedData = localStorage.getItem("board");
+
     // Si des données existent, les retourner, sinon utiliser les données par défaut
     return storedData ? JSON.parse(storedData) : defaultData;
   } catch (error) {
@@ -37,30 +46,67 @@ const getInitialData =  (): ColumnProps => {
 };
 
 export const useBoardStore = create<BoardStore>((set) => ({
-  draggingCard: null,
   columnsData: getInitialData(),
+
+  updateTitle: (newtitle: string) => {
+    set((state) => {
+      const newState = { ...state.columnsData, title: newtitle };
+      localStorage.setItem("board", JSON.stringify(newState));
+      return {
+        columnsData: newState,
+      };
+    });
+  },
+
+  draggingCard: null,
   setDraggingCard: (cardId: string | null) => set({ draggingCard: cardId }),
 
   addTask: (columnId, card) =>
     set((state) => {
-      // Vérifier que la colonne existe
-      if (!state.columnsData[columnId]) {
-        return state; // Retourner l'état inchangé si la colonne n'existe pas
+      if (!state.columnsData.columns[columnId]) {
+        return state;
       }
 
-      // Créer une copie du tableau de cartes de la colonne et ajouter la nouvelle carte
-      const updatedColumnCards = [...state.columnsData[columnId], card];
+      const updatedColumnCards = [...state.columnsData.columns[columnId], card];
 
-      // Retourner un nouvel état avec la colonne mise à jour
       const newState = {
-        columnsData: {
-          ...state.columnsData,
+        ...state.columnsData,
+        columns: {
+          ...state.columnsData.columns,
           [columnId]: updatedColumnCards,
         },
       };
 
-      localStorage.setItem('board', JSON.stringify(newState))
-      return newState;
+      localStorage.setItem("board", JSON.stringify(newState));
+      return {
+        columnsData: newState,
+      };
+    }),
+
+  updateTask: (columnId, updatedCard) =>
+    set((state) => {
+      console.log("u", updatedCard, columnId);
+      if (!state.columnsData.columns[columnId]) {
+        return state;
+      }
+
+      const updatedColumnCards = state.columnsData.columns[columnId].map(
+        (card) => (card.id === updatedCard.id ? updatedCard : card)
+      );
+
+      console.log("u", updatedColumnCards);
+      const newState = {
+        ...state.columnsData,
+        columns: {
+          ...state.columnsData.columns,
+          [columnId]: updatedColumnCards,
+        },
+      };
+
+      localStorage.setItem("board", JSON.stringify(newState));
+      return {
+        columnsData: newState,
+      };
     }),
 
   moveCard: (
@@ -69,16 +115,17 @@ export const useBoardStore = create<BoardStore>((set) => ({
     column: string,
     index: number
   ) =>
-    set(() => {
+    set((state) => {
       const newState = {
-        columnsData: moveCardToColumn({
+        ...state.columnsData,
+        columns: moveCardToColumn({
           cards,
           cardId,
           column,
           index,
         }),
       };
-      localStorage.setItem('board', JSON.stringify(newState))
-      return newState;
+      localStorage.setItem("board", JSON.stringify(newState));
+      return { columnsData: newState };
     }),
 }));
