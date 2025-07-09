@@ -15,12 +15,14 @@ type BoardStore = {
   updateTitle: (newtitle: string) => void;
   addTask: (columnId: string, card: CardProps) => void;
   updateTask: (columnId: string, updatedCard: CardProps) => void;
-  moveCard: (
+  deleteTask: (column: string, cardId: number) => void;
+  moveTask: (
     cards: ColumnProps,
     cardId: string,
     column: string,
     index: number
   ) => void;
+  addColumn: (name: string) => void;
 };
 
 const defaultData: DataProps = {
@@ -93,8 +95,6 @@ export const useBoardStore = create<BoardStore>((set) => ({
       const updatedColumnCards = state.columnsData.columns[columnId].map(
         (card) => (card.id === updatedCard.id ? updatedCard : card)
       );
-
-      console.log("u", updatedColumnCards);
       const newState = {
         ...state.columnsData,
         columns: {
@@ -109,7 +109,25 @@ export const useBoardStore = create<BoardStore>((set) => ({
       };
     }),
 
-  moveCard: (
+  deleteTask: (column: string, cardId: number) =>
+    set((state) => {
+      const tasks = state.columnsData.columns[column].filter(
+        (t) => t.id !== cardId
+      );
+      const newState = {
+        ...state.columnsData,
+        columns: {
+          ...state.columnsData.columns,
+          [column]: tasks,
+        },
+      };
+      localStorage.setItem("board", JSON.stringify(newState));
+      return {
+        columnsData: newState,
+      };
+    }),
+
+  moveTask: (
     cards: ColumnProps,
     cardId: string,
     column: string,
@@ -127,5 +145,16 @@ export const useBoardStore = create<BoardStore>((set) => ({
       };
       localStorage.setItem("board", JSON.stringify(newState));
       return { columnsData: newState };
+    }),
+  addColumn: (name: string) =>
+    set((state) => {
+      const newState = {
+        ...state.columnsData,
+        columns: { ...state.columnsData.columns, [name]: [] },
+      };
+      localStorage.setItem("board", JSON.stringify(newState));
+      return {
+        columnsData: newState,
+      };
     }),
 }));

@@ -52,23 +52,17 @@ export function AddItem({
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {type === "Add" ? (
           <Button
             variant="ghost"
             className="text-muted-foreground font-normal w-20"
-            onClick={() => setIsOpen(true)}
           >
             Add items
           </Button>
         ) : (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="p-1"
-            onClick={() => setIsOpen(true)}
-          >
+          <Button variant="ghost" size="icon" className="p-1">
             <Edit size={16} />
           </Button>
         )}
