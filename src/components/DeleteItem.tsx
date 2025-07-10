@@ -16,20 +16,34 @@ import { Trash } from "lucide-react";
 export function DeleteItem({
   cardId,
   column,
+  type = "card",
 }: {
-  cardId: number;
+  cardId?: number;
   column: string;
+  type?: "card" | "column";
 }) {
   const handleDelete = () => {
-    useBoardStore.getState().deleteTask(column, cardId);
+    if (type === "card" && cardId) {
+      useBoardStore.getState().deleteTask(column, cardId);
+    }
+    if (type === "column") {
+      useBoardStore.getState().deleteColumn(column);
+    }
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Trash />
-        </Button>
+        {type === "card" ? (
+          <Button variant="ghost" size="icon">
+            <Trash />
+          </Button>
+        ) : (
+          <Button variant="ghost" className="justify-start font-normal">
+            <Trash />
+            Delete
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

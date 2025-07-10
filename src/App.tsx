@@ -48,7 +48,7 @@ function App() {
           value={useBoardStore.getState().columnsData.title}
           onChange={(e) => handleChangeTitle(e.target.value)}
         />
-        <AddColumn />
+        <AddColumn type="add"/>
         <ShareLink />
       </header>
       <div className="p-8 flex gap-4 overflow-x-auto flex-auto">

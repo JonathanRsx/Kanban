@@ -23,6 +23,8 @@ type BoardStore = {
     index: number
   ) => void;
   addColumn: (name: string) => void;
+  updateColumn: (oldName: string, name: string) => void;
+  deleteColumn: (name: string) => void;
 };
 
 const defaultData: DataProps = {
@@ -151,6 +153,31 @@ export const useBoardStore = create<BoardStore>((set) => ({
       const newState = {
         ...state.columnsData,
         columns: { ...state.columnsData.columns, [name]: [] },
+      };
+      localStorage.setItem("board", JSON.stringify(newState));
+      return {
+        columnsData: newState,
+      };
+    }),
+  deleteColumn: (name: string) =>
+    set((state) => {
+      const newColumns = { ...state.columnsData.columns };
+      delete newColumns[name];
+      const newState = {
+        ...state.columnsData,
+        columns: newColumns,
+      };
+      localStorage.setItem("board", JSON.stringify(newState));
+      return {
+        columnsData: newState,
+      };
+    }),
+  updateColumn: (oldName: string, name: string) =>
+    set((state) => {
+      const { [oldName]: value, ...rest } = state.columnsData.columns;
+      const newState = {
+        ...state.columnsData,
+        columns: { ...rest, [name]: value },
       };
       localStorage.setItem("board", JSON.stringify(newState));
       return {

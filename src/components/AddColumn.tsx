@@ -13,13 +13,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useBoardStore } from "@/board-store";
 import { useState } from "react";
+import { Edit } from "lucide-react";
 
-export function AddColumn() {
+export function AddColumn({
+  type = "add",
+  current,
+}: {
+  type: "add" | "edit";
+  current?: string;
+}) {
   const [open, setIsOpen] = useState(false);
-  const [column, setColumn] = useState("");
+  const [column, setColumn] = useState(current);
   const [message, setMessage] = useState("");
 
   const handleSubmit = () => {
+    if (current === column) {
+      setIsOpen(false);
+      setMessage("");
+      return
+    }
     const columns = Object.keys(
       useBoardStore.getState().columnsData.columns
     ) as string[];
@@ -27,7 +39,11 @@ export function AddColumn() {
     else if (columns.find((c) => c === column)) {
       setMessage("Column allready exist");
     } else {
-      useBoardStore.getState().addColumn(column);
+      if (type === "add") {
+        useBoardStore.getState().addColumn(column);
+      } else if (current) {
+        useBoardStore.getState().updateColumn(current, column);
+      }
       setColumn("");
       setMessage("");
       setIsOpen(false);
@@ -37,7 +53,14 @@ export function AddColumn() {
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add column</Button>
+        {type === "add" ? (
+          <Button variant="outline">Add column</Button>
+        ) : (
+          <Button variant="ghost" className="justify-start font-normal">
+            <Edit />
+            Edit
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
