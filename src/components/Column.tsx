@@ -33,7 +33,7 @@ export default function Column({
   return (
     <div
       className={cn(
-        "shrink-0 bg-secondary w-80 rounded-2xl flex flex-col",
+        "shrink-0 bg-secondary w-80 rounded-2xl flex flex-col border",
         active && "bg-violet-100"
       )}
     >

@@ -4,6 +4,7 @@ import { useBoardStore } from "./board-store";
 import { Input } from "./components/ui/input";
 import { AddColumn } from "./components/AddColumn";
 import { ShareLink } from "./components/ShareLink";
+import { cn } from "./lib/utils";
 
 function App() {
   const getQueryParam = () => {
@@ -16,10 +17,10 @@ function App() {
   const data = getQueryParam();
   if (data) {
     localStorage.setItem("board", JSON.parse(data));
-    useBoardStore.setState({columnsData: JSON.parse(data)})
+    useBoardStore.setState({ columnsData: JSON.parse(data) });
   }
 
-  const {columnsData} = useBoardStore()
+  const { columnsData } = useBoardStore();
 
   const moveCard = useBoardStore((state) => state.moveTask);
 
@@ -39,7 +40,7 @@ function App() {
 
   return (
     <div className="w-full h-screen flex flex-col">
-      <header className="flex p-8 pb-0 gap-4">
+      <header className="flex p-8 pb-0 gap-4 z-10">
         <Input
           type="text"
           className="border-none text-3xl font-bold"
@@ -48,10 +49,10 @@ function App() {
           value={useBoardStore.getState().columnsData.title}
           onChange={(e) => handleChangeTitle(e.target.value)}
         />
-        <AddColumn type="add"/>
+        <AddColumn type="add" />
         <ShareLink />
       </header>
-      <div className="p-8 flex gap-4 overflow-x-auto flex-auto">
+      <div className="p-8 flex gap-4 overflow-x-auto flex-auto z-10">
         {columns.map((column) => (
           <Column
             key={column}
@@ -61,6 +62,14 @@ function App() {
           />
         ))}
       </div>
+      <div
+        className={cn(
+          "absolute inset-0",
+          "[background-size:20px_20px]",
+          "[background-image:radial-gradient(#e4e4e4_1px,transparent_1px)]",
+          "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]"
+        )}
+      />
     </div>
   );
 }
